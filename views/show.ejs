@@ -1,0 +1,73 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script> 
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<div class="topnav">
+    <a href="/addMember">Add another member</a>
+    <a href="/Show">Show Graph</a>
+    <a href="/ShortPath">About</a>
+  </div>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        This force directed graph shows an  network graph, where
+        the nodes represent family members and the most intermmediate relations they have.
+        The nodes can be dragged around and will be repositioned dynamically.
+        Network graphs are typically used to show relations in data. In this
+        case, we are showing a hierarchical structure.
+    </p>
+</figure>
+<script>
+    $.getJSON('/BringGraph',(data)=>{
+        var graph = new Map(JSON.parse(data));
+        var links = new Set();
+        graph.forEach((value,key,map)=>{
+            console.log(key,value)
+            value.forEach((i)=>{
+                if(!links.has([i[0],key]))
+                links.add([key,i[0]])
+            })
+        })
+        console.log(links)
+        Highcharts.chart('container', {
+        chart: {
+            type: 'networkgraph',
+            plotBorderWidth: 1
+        },
+        title: {
+            text: 'Networkgraph with random initial positions'
+        },
+        plotOptions: {
+            networkgraph: {
+                keys: ['from', 'to']
+            }
+        },
+        series: [{
+            dataLabels :{
+                enabled: true
+            },
+            layoutAlgorithm: {
+                enableSimulation: true,
+                initialPositions: function () {
+                    var chart = this.series[0].chart,
+                        width = chart.plotWidth,
+                        height = chart.plotHeight;
+
+                    this.nodes.forEach(function (node) {
+                        // If initial positions were set previously, use that
+                        // positions. Otherwise use random position:
+                        node.plotX = node.plotX === undefined ?
+                            Math.random() * width : node.plotX;
+                        node.plotY = node.plotY === undefined ?
+                            Math.random() * height : node.plotY;
+                    });
+                }
+            },
+            name: 'K8',
+            data: [...links]
+        }]
+    });
+    })
+
+</script>
+

@@ -1,0 +1,16 @@
+{
+  "name": "family-graph",
+  "version": "1.0.0",
+  "description": "Website for family relationship graph",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jatin Pandey, Ishaan Kaul",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.0"
+  }
+}
